@@ -1,0 +1,7 @@
+name = "VLKeggSDK"
+uuid = "59d58518-d0ed-4fe8-96b0-16212f222203"
+authors = ["Jeffrey Varner <jdv27@cornell.edu>"]
+version = "0.1.0"
+
+[deps]
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
