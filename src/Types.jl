@@ -4,6 +4,8 @@ mutable struct KEGGReaction
     kegg_reaction_number::String
     kegg_enzyme_name::String
     kegg_reaction_markup::String
+    kegg_reaction_forward::String
+    kegg_reaction_reverse::String
 
     KEGGReaction() = new()
 end

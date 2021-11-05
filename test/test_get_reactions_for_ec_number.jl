@@ -1,4 +1,5 @@
 using VLKeggSDK
+using DataFrames
 
 # setup an array of ec numbers -
 ec_number_array = [
@@ -10,3 +11,6 @@ ec_number_array = [
 
 # download these reactions -
 reaction_array = get_reactions_for_ec_number(ec_number_array) |> check
+
+# build data table -
+data_table = DataFrame(reaction_array)

@@ -88,8 +88,18 @@ function get_reactions_for_ec_number(ec_number::String)::Some
                     reaction_wrapper.kegg_reaction_number = rn_number
 
                     # parse the body string -
-                    reaction_wrapper.kegg_enzyme_name = string(split(reaction_string, ";")[1])
-                    reaction_wrapper.kegg_reaction_markup = lstrip(chomp(string(split(reaction_string, ";")[2])))
+                    tmp_enzyme_name = string(split(reaction_string, ";")[1])
+                    reaction_wrapper.kegg_enzyme_name = string(split(tmp_enzyme_name, "\t")[2])
+                    
+                    # split into forward and reverse strings -
+                    tmp_full_reaction_string = lstrip(chomp(string(split(reaction_string, ";")[2])))
+                    reaction_wrapper.kegg_reaction_markup = tmp_full_reaction_string
+
+                    # forward -
+                    reaction_wrapper.kegg_reaction_forward = lowercase(string(split(tmp_full_reaction_string, " <=> ")[1]))
+
+                    # reverse -
+                    reaction_wrapper.kegg_reaction_reverse = lowercase(string(split(tmp_full_reaction_string, " <=> ")[2]))
 
                     # cache -
                     push!(record_array, reaction_wrapper)
