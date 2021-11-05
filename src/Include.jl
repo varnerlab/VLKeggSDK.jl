@@ -18,4 +18,5 @@ include(joinpath(_PATH_TO_SRC, "Compounds.jl"))
 const _KEGG_LINKAGE_REACTION_URL = "http://rest.kegg.jp/link/rn"
 const _KEGG_LINKAGE_EC_URL = "http://rest.kegg.jp/link/ec"
 const _KEGG_LIST_URL = "http://rest.kegg.jp/list"
-const _KEGG_COMPOUND_URL = "http://rest.kegg.jp/list/compound"
+const _KEGG_LIST_COMPOUND_URL = "http://rest.kegg.jp/list/compound"
+const _KEGG_GET_COMPOUND_URL = "http://rest.kegg.jp/get"
