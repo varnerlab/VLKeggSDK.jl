@@ -93,7 +93,7 @@ function get_compound_records(compound::String)::Some
     try
 
         # build url -
-        url_string = "$(_KEGG_GET_COMPOUND_URL)/$(compound)"
+        url_string = "$(_KEGG_GET_URL)/$(compound)"
 
          # make the call -
         http_body = http_get_call_with_url(url_string) |> check

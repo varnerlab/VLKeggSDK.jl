@@ -35,7 +35,7 @@ mutable struct KEGGSequence
 
     gene_location::String
     type::Symbol
-    body::Array{SubString{String},1}
+    body::String
     header::String
 
     KEGGSequence() = new()
