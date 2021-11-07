@@ -8,8 +8,13 @@ export KEGGReaction
 export KEGGOrgansim
 export KEGGSequence
 export KEGGCompound
+export KEGGPathway
 
 # method exports -
+export get_ec_number_for_gene
+export get_genes_in_organism_pathway
+export get_pathways_for_organism
+export get_kegg_organism_codes
 export get_sequence_for_gene
 export get_sequence_for_protein
 export get_compound_records

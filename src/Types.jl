@@ -4,8 +4,8 @@ mutable struct KEGGReaction
     kegg_reaction_number::String
     kegg_enzyme_name::String
     kegg_reaction_markup::String
-    kegg_reaction_forward::String
-    kegg_reaction_reverse::String
+    reaction_forward::Union{Missing,String}
+    reaction_reverse::Union{Missing,String}
 
     KEGGReaction() = new()
 end
@@ -35,8 +35,18 @@ mutable struct KEGGSequence
 
     gene_location::String
     type::Symbol
-    body::String
+    sequence::Union{Missing,BioSequences.LongSequence}
     header::String
 
     KEGGSequence() = new()
+end
+
+
+mutable struct KEGGPathway
+
+    # data -
+    pathway_id::String
+    pathway_description::String
+
+    KEGGPathway() = new()
 end

@@ -76,7 +76,7 @@ function get_sequence_for_gene(gene_location::String)::Some
         # build seq string -
         seq_buffer = ""
         [seq_buffer *= string(x) for x in fragment_array[2:end - 1]]
-        sequence.body = seq_buffer
+        sequence.sequence = LongDNASeq(seq_buffer)
 
         # return the sequence -
         return Some(sequence)
@@ -152,7 +152,7 @@ function get_sequence_for_protein(gene_location::String)::Some
         # build seq string -
         seq_buffer = ""
         [seq_buffer *= string(x) for x in fragment_array[2:end - 1]]
-        sequence.body = seq_buffer
+        sequence.sequence = LongSequence{AminoAcidAlphabet}(seq_buffer)
 
         # return the sequence -
         return Some(sequence)
