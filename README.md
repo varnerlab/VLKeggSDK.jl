@@ -24,6 +24,8 @@ or
 
 ### Examples
 
+##### Download and parse reactions in a organism and pathway
+
 ```julia
 using VLKeggSDK
 using DataFrames
@@ -38,7 +40,7 @@ eco_gene_list = get_genes_in_organism_pathway(organism_code, pathway_code) |> ch
 # Next, get the list of ec's associated with these genes -
 ec_number_list = get_ec_number_for_gene(eco_gene_list) |> check
 
-# Finally, get the reactions -
+# Finally, get the reactions -> returned as a DataFrame
 reaction_table = get_reactions_for_ec_number(ec_number_list) |> check |> DataFrame
 ```
 
