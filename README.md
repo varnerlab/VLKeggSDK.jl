@@ -19,9 +19,6 @@ or
 
 	$ git clone https://github.com/varnerlab/VLKeggSDK.jl
 
-
-### Functions
-
 ### Examples
 
 ##### Download and parse reactions in a organism and pathway
