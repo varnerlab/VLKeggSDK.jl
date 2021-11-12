@@ -1,9 +1,31 @@
 # --- PUBLIC METHODS ----------------------------------------------------------- #
-function get_reactions_for_rn_number(rn_number_array::Array{String,1})::Some
-    
+function get_reaction_for_rn_number(rn_number_array::Array{String,1})::Some
+
+    try
+
+        # initialize -
+        reaction_object_array = Array{KEGGReaction,1}()
+        for rn_number in rn_number_array
+            rxn_object = get_reaction_for_rn_number(rn_number) |> check
+            if (isnothing(rxn_object) == false)
+                push!(reaction_object_array, rxn_object)
+            end
+        end
+
+        # return -
+        return Some(reaction_object_array)
+    catch error
+
+        # get the original error message -
+        error_message = sprint(showerror, error, catch_backtrace())
+        vl_error_obj = ErrorException(error_message)
+
+        # Package the error -
+        return Some(vl_error_obj)
+    end
 end
 
-function get_reactions_for_rn_number(rn_number::String)::Some
+function get_reaction_for_rn_number(rn_number::String)::Some
 
     try
 
@@ -13,7 +35,7 @@ function get_reactions_for_rn_number(rn_number::String)::Some
 
         # formulae the URL string -
         url_string = "$(_KEGG_GET_URL)/$(rn_number)"
-        
+
         # make the call -
         http_body = http_get_call_with_url(url_string) |> check
         if (isempty(http_body) == true)
@@ -50,6 +72,7 @@ function get_reactions_for_rn_number(rn_number::String)::Some
 
         # return -
         return Some(kegg_reaction)
+
     catch error
         # get the original error message -
         error_message = sprint(showerror, error, catch_backtrace())
@@ -75,7 +98,7 @@ function get_reactions_for_ec_number(ec_number_array::Array{String,1})::Some
 
         # process -
         for ec_number in ec_number_array
-            
+
             # do we have an error?
             local_reaction_array = get_reactions_for_ec_number(ec_number) |> check
 
@@ -140,7 +163,7 @@ function get_reactions_for_ec_number(ec_number::String)::Some
                 reaction_string = chomp((http_get_call_with_url("$(_KEGG_LIST_URL)/$(rn_number)")) |> check)
 
                 # if we have something in reaction string, create a string record -
-                if (length(reaction_string) != 0 && 
+                if (length(reaction_string) != 0 &&
                     contains(reaction_string, ";") == true)
 
                     # create a new Reaction wrapper -
@@ -153,15 +176,15 @@ function get_reactions_for_ec_number(ec_number::String)::Some
                     # parse the body string -
                     tmp_enzyme_name = string(split(reaction_string, ";")[1])
                     reaction_wrapper.kegg_enzyme_name = string(split(tmp_enzyme_name, "\t")[2])
-                    
+
                     # split into forward and reverse strings -
                     tmp_full_reaction_string = lstrip(chomp(string(split(reaction_string, ";")[2])))
                     reaction_wrapper.kegg_reaction_markup = tmp_full_reaction_string
 
-                    
+
                     tmp_string_frag = split(tmp_full_reaction_string, " <=> ")
                     if (length(tmp_string_frag) == 2)
-                        
+
                         # forward -
                         reaction_wrapper.reaction_forward = lowercase(string(tmp_string_frag[1]))
 
@@ -171,7 +194,7 @@ function get_reactions_for_ec_number(ec_number::String)::Some
                         reaction_wrapper.reaction_forward = missing
                         reaction_wrapper.reaction_reverse = missing
                     end
-                    
+
                     # cache -
                     push!(record_array, reaction_wrapper)
                 end
@@ -186,7 +209,7 @@ function get_reactions_for_ec_number(ec_number::String)::Some
         # return list of records -
         return Some(record_array)
     catch error
-        
+
         # get the original error message -
         error_message = sprint(showerror, error, catch_backtrace())
         vl_error_obj = ErrorException(error_message)
@@ -220,7 +243,7 @@ function get_genes_in_organism_pathway(organism_code::String, pathway_code::Stri
                 push!(gene_list, gene_value)
             end
         end
-        
+
         # return -
         return Some(gene_list)
 
@@ -243,7 +266,7 @@ function get_ec_number_for_gene(gene_array::Array{String,1})::Some
         # initialize -
         ec_number_array = Array{String,1}()
         for gene in gene_array
-            
+
             local_ec_number_array = get_ec_number_for_gene(gene) |> check
             if (isnothing(local_ec_number_array) == false)
                 for ec_number in local_ec_number_array
@@ -273,7 +296,7 @@ function get_ec_number_for_gene(gene_location::String)::Some
 
         # curl -X GET http://rest.kegg.jp/link/ec/eco:b2388  => ec for this gene
         # curl -X GET http://rest.kegg.jp/link/eco/eco00010  => genes for a pathway
-        
+
         # initialize -
         ec_number_array = String[]
 
@@ -304,7 +327,7 @@ function get_ec_number_for_gene(gene_location::String)::Some
         return Some(ec_number_array)
 
     catch error
-        
+
         # get the original error message -
         error_message = sprint(showerror, error, catch_backtrace())
         vl_error_obj = ErrorException(error_message)
@@ -337,7 +360,7 @@ function get_pathways_for_organism(organism_code::String)::Some
             # split along the \t -
             fragment_array = split(string(token), "\t")
             if (length(fragment_array) == 2)
-                
+
                 # build -
                 pathway_object = KEGGPathway()
                 pathway_object.pathway_id = string(fragment_array[1])
@@ -347,10 +370,10 @@ function get_pathways_for_organism(organism_code::String)::Some
                 push!(pathway_array, pathway_object)
             end
         end
-        
+
         # return -
         return Some(pathway_array)
-        
+
     catch error
 
         # get the original error message -
