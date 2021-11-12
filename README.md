@@ -44,6 +44,25 @@ ec_number_list = get_ec_number_for_gene(eco_gene_list) |> check
 reaction_table = get_reactions_for_ec_number(ec_number_list) |> check |> DataFrame
 ```
 
+##### Download and parse the DNA and protein sequences for genes  
+```julia
+using VLKeggSDK
+using DataFrames
+
+# specify a list of genes (notice this has the KEGG organism code) -
+gene_array = [
+    "eco:b2388"
+]
+
+# DNA sequence for each gene in the list of genes -> piped to a DataFrame
+# DNA sequence is a BioSequences.LongDNASeq type -
+gene_table = get_sequence_for_gene(gene_array) |> check |> DataFrame
+
+# Protein sequence for each gene in the list of genes -> piped to a DataFrame
+# Protein sequence is a BioSequences.LongAminoAcidSeq  -
+protein_table = get_sequence_for_protein(gene_array) |> check |> DataFrame
+```
+
 ### Funding
 The work described was supported by the [Center on the Physics of Cancer Metabolism at Cornell University](https://psoc.engineering.cornell.edu) through Award Number 1U54CA210184-01 from the [National Cancer Institute](https://www.cancer.gov). The content is solely the responsibility of the authors and does not necessarily
 represent the official views of the [National Cancer Institute](https://www.cancer.gov) or the [National Institutes of Health](https://www.nih.gov).
