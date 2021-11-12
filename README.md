@@ -63,6 +63,31 @@ gene_table = get_sequence_for_gene(gene_array) |> check |> DataFrame
 protein_table = get_sequence_for_protein(gene_array) |> check |> DataFrame
 ```
 
+##### Download compound information
+```julia
+using VLKeggSDK
+using DataFrames
+
+# lookup the following compounds -
+test_compound_array = [
+    "cpd:C20820"
+    "cpd:C19376"
+    "cpd:C01799"
+    "cpd:C00092"
+    "cpd:C00085"
+    "cpd:C00031"
+    "cpd:C00002"
+    "cpd:C00001"
+    "cpd:C00003"
+    "cpd:C00004"
+    "cpd:C00092"
+];
+
+# get the data for these compounds -
+compound_table = (get_compound_records(test_compound_array) |> check) |> DataFrame
+```
+
+
 ### Funding
 The work described was supported by the [Center on the Physics of Cancer Metabolism at Cornell University](https://psoc.engineering.cornell.edu) through Award Number 1U54CA210184-01 from the [National Cancer Institute](https://www.cancer.gov). The content is solely the responsibility of the authors and does not necessarily
 represent the official views of the [National Cancer Institute](https://www.cancer.gov) or the [National Institutes of Health](https://www.nih.gov).
