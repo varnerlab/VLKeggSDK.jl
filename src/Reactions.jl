@@ -1,4 +1,66 @@
 # --- PUBLIC METHODS ----------------------------------------------------------- #
+function get_reactions_for_rn_number(rn_number_array::Array{String,1})::Some
+    
+end
+
+function get_reactions_for_rn_number(rn_number::String)::Some
+
+    try
+
+        # initialize -
+        kegg_reaction = KEGGReaction()
+        kegg_reaction.kegg_reaction_number = rn_number
+
+        # formulae the URL string -
+        url_string = "$(_KEGG_GET_URL)/$(rn_number)"
+        
+        # make the call -
+        http_body = http_get_call_with_url(url_string) |> check
+        if (isempty(http_body) == true)
+            return Some(nothing)
+        end
+
+        # split around the \n -
+        record_array = string.(split(http_body, "\n"))
+
+        # grab: equation section -
+        equation_section = extract_db_file_section(record_array, "EQUATION")
+        if (isnothing(equation_section) == true)
+            return Some(nothing)
+        end
+        rxn_string = string(split(equation_section, repeat(" ", 3))[2] |> lstrip)
+        kegg_reaction.kegg_reaction_markup = rxn_string
+
+        # reaction components -
+        rxn_component_array = string.(split(rxn_string, " <=> "))
+        kegg_reaction.reaction_forward = rxn_component_array[1]
+        kegg_reaction.reaction_reverse = rxn_component_array[2]
+
+        # grab: enzyme section -> ec number 
+        enzyme_section = extract_db_file_section(record_array, "ENZYME")
+        if (isnothing(enzyme_section) == true)
+            return Some(nothing)
+        end
+        tmp_ec_number = string(split(enzyme_section, repeat(" ", 4))[2] |> lstrip)
+        kegg_reaction.ec_number = "ec:$(tmp_ec_number)"
+
+        # grab: enzyme name -
+        name = extract_db_file_section(record_array, "NAME")
+        kegg_reaction.kegg_enzyme_name = string(split(name, repeat(" ", 5))[2] |> lstrip)
+
+        # return -
+        return Some(kegg_reaction)
+    catch error
+        # get the original error message -
+        error_message = sprint(showerror, error, catch_backtrace())
+        vl_error_obj = ErrorException(error_message)
+
+        # Package the error -
+        return Some(vl_error_obj)
+    end
+end
+
+
 function get_reactions_for_ec_number(ec_number_array::Array{String,1})::Some
 
     try
@@ -79,7 +141,7 @@ function get_reactions_for_ec_number(ec_number::String)::Some
 
                 # if we have something in reaction string, create a string record -
                 if (length(reaction_string) != 0 && 
-                    contains(reaction_string,";") == true)
+                    contains(reaction_string, ";") == true)
 
                     # create a new Reaction wrapper -
                     reaction_wrapper = KEGGReaction()
@@ -134,6 +196,7 @@ function get_reactions_for_ec_number(ec_number::String)::Some
     end
 end
 
+
 function get_genes_in_organism_pathway(organism_code::String, pathway_code::String)::Some
 
     try
@@ -149,9 +212,9 @@ function get_genes_in_organism_pathway(organism_code::String, pathway_code::Stri
         end
 
         # split along the newline -
-        tokenized_body = split(http_body,"\n")
+        tokenized_body = split(http_body, "\n")
         for token in tokenized_body
-            fragment_array = split(token,"\t")
+            fragment_array = split(token, "\t")
             if (length(fragment_array) > 1)
                 gene_value = string(fragment_array[2])
                 push!(gene_list, gene_value)
@@ -268,7 +331,7 @@ function get_pathways_for_organism(organism_code::String)::Some
         end
 
         # split along the newline -
-        tokenized_body = split(http_body,"\n")
+        tokenized_body = split(http_body, "\n")
         for token in tokenized_body
 
             # split along the \t -

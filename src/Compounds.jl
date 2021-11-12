@@ -95,7 +95,7 @@ function get_compound_records(compound::String)::Some
         # build url -
         url_string = "$(_KEGG_GET_URL)/$(compound)"
 
-         # make the call -
+        # make the call -
         http_body = http_get_call_with_url(url_string) |> check
         if (isempty(http_body) == true)
             return Some(nothing)
