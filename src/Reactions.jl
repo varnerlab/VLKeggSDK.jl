@@ -102,7 +102,7 @@ function get_reactions_for_ec_number(ec_number_array::Array{String,1})::Some
             local_reaction_array = get_reactions_for_ec_number(ec_number) |> check
 
             # no - then, if this is not nothing, add -
-            if (isnothing(reaction_array) == false)
+            if (isnothing(local_reaction_array) == false)
                 for reaction in local_reaction_array
                     push!(reaction_array, reaction)
                 end

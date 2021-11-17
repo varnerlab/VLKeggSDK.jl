@@ -76,7 +76,34 @@ function get_ec_number_for_gene(gene_location::String)::Some
     end
 end
 
-function get_ec_numbers_for_pathway(pathway_code::Array{String,1})::Some
+function get_ec_numbers_for_pathway(pathway_code_array::Array{String,1})::Some
+
+    try
+
+        # master ec numner list -
+        master_ec_number_list = Array{String,1}()
+
+        # process the list of pathways -
+        for pathway_code in pathway_code_array
+            
+            # get ec number array -
+            ec_number_array = get_ec_numbers_for_pathway(pathway_code) |> check
+            if (isnothing(ec_number_array) == false)
+                append!(master_ec_number_list, ec_number_array)
+            end
+        end
+
+        # return -
+        return Some(master_ec_number_list)
+    catch error
+    
+        # get the original error message -
+        error_message = sprint(showerror, error, catch_backtrace())
+        vl_error_obj = ErrorException(error_message)
+
+        # Package the error -
+        return Some(vl_error_obj)
+    end
 end
 
 function get_ec_numbers_for_pathway(pathway_code::String)::Some
