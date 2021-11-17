@@ -12,6 +12,7 @@ export KEGGPathway
 
 # method exports -
 export get_ec_number_for_gene
+export get_ec_numbers_for_pathway
 export get_genes_in_organism_pathway
 export get_pathways_for_organism
 export get_kegg_organism_codes

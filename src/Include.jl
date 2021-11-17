@@ -16,6 +16,7 @@ include(joinpath(_PATH_TO_SRC, "Reactions.jl"))
 include(joinpath(_PATH_TO_SRC, "Compounds.jl"))
 include(joinpath(_PATH_TO_SRC, "Sequence.jl"))
 include(joinpath(_PATH_TO_SRC, "Organism.jl"))
+include(joinpath(_PATH_TO_SRC, "ECNumbers.jl"))
 
 
 # URL string -
