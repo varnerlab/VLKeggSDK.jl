@@ -6,6 +6,7 @@ using Test
 using HTTP
 using DataFrames
 using BioSequences
+using ProgressMeter
 
 # load my codes -
 include(joinpath(_PATH_TO_SRC, "Types.jl"))

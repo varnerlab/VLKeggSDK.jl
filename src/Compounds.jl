@@ -1,7 +1,7 @@
 function build_metabolite_keggid_matching_table()::Some
 
     try
-        
+
         # initialize -
         metabolite_matching_table = Dict{String,String}()
 
@@ -25,7 +25,7 @@ function build_metabolite_keggid_matching_table()::Some
 
             if (record != "")
                 # split around the \t -
-                tmp_compound_name =  string(split(record, "\t")[1])
+                tmp_compound_name = string(split(record, "\t")[1])
                 kegg_compound_id = string(split(tmp_compound_name, ":")[2])
                 compound_name_array = split(record, "\t")[2]
                 if (occursin(";", compound_name_array) == true)
@@ -54,7 +54,7 @@ function build_metabolite_keggid_matching_table()::Some
     end
 
 
-    
+
 end
 
 function get_compound_records(compound_array::Array{String,1})::Some
@@ -66,7 +66,7 @@ function get_compound_records(compound_array::Array{String,1})::Some
 
         # main loop -
         for compound in compound_array
-            
+
             # build compound object -
             object = get_compound_records(compound) |> check
 
@@ -109,26 +109,26 @@ function get_compound_records(compound::String)::Some
         compound_object.kegg_compound_id = compound
 
         # NAME is always the [2] -
-        tmp_name = split(record_components[2], repeat(" ", 5))[2] |> lstrip |> rstrip |>  lowercase
-        compound_object.kegg_compound_name = (last(tmp_name) == ';') ? tmp_name[1:end - 1] : tmp_name                   
-        
+        tmp_name = split(record_components[2], repeat(" ", 5))[2] |> lstrip |> rstrip |> lowercase
+        compound_object.kegg_compound_name = (last(tmp_name) == ';') ? tmp_name[1:end-1] : tmp_name
+
         # FORMULA -> we need to scan to find the formula record -
         for record in record_components
             if (contains(record, "FORMULA") == true)
-                compound_object.kegg_compound_formula = split(record, repeat(" ", 5))[2] |> lstrip  |> rstrip                 
-        break
+                compound_object.kegg_compound_formula = split(record, repeat(" ", 5))[2] |> lstrip |> rstrip
+                break
             end
         end
-        
+
         # MOL_WEIGHT -> we need to scan to find the mw recrod -
         for record in record_components
             if (contains(record, "MOL_WEIGHT") == true)
-                compound_object.kegg_compound_mw = parse(Float64, (split(record, repeat(" ", 2))[2] |> lstrip |> rstrip))                          
+                compound_object.kegg_compound_mw = parse(Float64, (split(record, repeat(" ", 2))[2] |> lstrip |> rstrip))
             end
         end
 
         # return -
-        return Some(compound_object)        
+        return Some(compound_object)
     catch error
 
         # get the original error message -
