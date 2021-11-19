@@ -6,7 +6,7 @@ using ProgressMeter
 master_compound_dictionary = build_metabolite_keggid_matching_table() |> check
 
 # so we need to make sure that *+ compounds have the * synonum in the collection -
-for (key, value) in master_compund_dictionary
+for (key, value) in master_compound_dictionary
 
     if (contains(key, "+") == true)
 

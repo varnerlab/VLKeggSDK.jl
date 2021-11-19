@@ -14,6 +14,7 @@ test_compund_array = [
     "cpd:C00003"
     "cpd:C00004"
     "cpd:C00092"
+    "cpd:C00244"
 ];
 
 # get the data for these compounds -
