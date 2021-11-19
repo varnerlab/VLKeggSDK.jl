@@ -139,3 +139,61 @@ function get_compound_records(compound::String)::Some
         return Some(vl_error_obj)
     end
 end
+
+
+function get_compound_records_for_reaction(reaction_code::String)::Some
+
+    try
+
+
+        # get the reaction object with metabolites in KEGG markup (not english names) -
+        kegg_reaction_object = get_reaction_for_rn_number(reaction_code) |> check
+        if (isnothing(kegg_reaction_object) == true)
+            return Some(nothing)
+        end
+
+        # initialize -
+        reaction_compound_record_array = Array{KEGGCompound,1}()
+
+        # pool the forward and reverse reaction strings -
+        tmp_reaction_phrase_pool = Array{String,1}()
+        push!(tmp_reaction_phrase_pool, kegg_reaction_object.reaction_forward)
+        push!(tmp_reaction_phrase_pool, kegg_reaction_object.reaction_reverse)
+
+        # build a local metabolite code pool -
+        local_metabolite_code_pool = Array{String,1}()
+        for reaction_phrase in tmp_reaction_phrase_pool
+            
+            # split around the + and strip space -
+            compound_code_array = split(reaction_phrase,"+")
+            for raw_compound_code in compound_code_array
+
+                # turn code into string, strip spaces -
+                tmp_code = string(raw_compound_code) |> lstrip |> rstrip
+
+                # cache -
+                value = "cpd:$(tmp_code)"
+                push!(local_metabolite_code_pool, value)
+            end
+        end
+
+        for metabolite_code in local_metabolite_code_pool
+            compound_record = get_compound_records(metabolite_code) |> check
+            if (isnothing(compound_record) == true)
+                return Some(nothing)
+            end
+            push!(reaction_compound_record_array, compound_record)
+        end
+
+        return Some(reaction_compound_record_array)
+
+    catch error
+
+        # get the original error message -
+        error_message = sprint(showerror, error, catch_backtrace())
+        vl_error_obj = ErrorException(error_message)
+
+        # Package the error -
+        return Some(vl_error_obj)
+    end
+end
