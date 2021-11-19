@@ -9,4 +9,18 @@ rn_number_array = [
     "rn:R01068"
 ]
 
-Z = get_compound_records_for_reaction(rn_number_array[1]) |> check
+# initialize -
+compound_record_array = Array{KEGGCompound,1}()
+for rn_number in rn_number_array
+
+    # get the compound records -
+    compound_record = get_compound_records_for_reaction(rn_number) |> check
+    if (isnothing(compound_record) == false)
+        append!(compound_record_array, compound_record)
+    end
+end
+
+# update -
+unique!(compound_record_array)
+
+

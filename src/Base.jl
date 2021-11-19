@@ -1,12 +1,12 @@
-function check(result::Some)::(Union{Nothing,T} where T <: Any)
+function check(result::Some)::(Union{Nothing,T} where {T<:Any})
 
     # ok, so check, do we have an error object?
     # Yes: log the error if we have a logger, then throw the error. 
     # No: return the result.value
 
-     # Error case -
+    # Error case -
     if (isa(something(result), Exception) == true)
-        
+
         # get the error object -
         error_object = result.value
 
@@ -36,7 +36,7 @@ function extract_db_file_section(file_buffer_array::Array{String,1}, single_line
     return section_line_start == 1 ? nothing : file_buffer_array[section_line_start]
 end
 
-function extract_db_file_section(file_buffer_array::Array{String,1}, start_section_marker::String, 
+function extract_db_file_section(file_buffer_array::Array{String,1}, start_section_marker::String,
     end_section_marker::String)::Array{String,1}
 
     # initialize -
@@ -54,11 +54,15 @@ function extract_db_file_section(file_buffer_array::Array{String,1}, start_secti
         end
     end
 
-    for line_index = (section_line_start + 1):(section_line_end - 1)
+    for line_index = (section_line_start+1):(section_line_end-1)
         line_item = file_buffer_array[line_index]
         push!(section_buffer, line_item)
     end
 
     # return -
     return section_buffer
+end
+
+function Base.:(==)(c1::KEGGCompound, c2::KEGGCompound)
+    return (c1.kegg_compound_name == c2.kegg_compound_name) && (c1.kegg_compound_id == c2.kegg_compound_id)
 end

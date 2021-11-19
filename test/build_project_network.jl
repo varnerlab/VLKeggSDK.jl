@@ -14,49 +14,52 @@ list_of_pathways = [
 ]
 
 # we'll get the ec's for these pathways -
-# ec_number_array = get_ec_numbers_for_pathway(list_of_pathways) |> check
-# N = length(ec_number_array)
-# reaction_obj_array = Array{KEGGReaction,1}()
-# @showprogress for (index, ec_number) in enumerate(ec_number_array)
+ec_number_array = get_ec_numbers_for_pathway(list_of_pathways) |> check
+N = length(ec_number_array)
+reaction_obj_array = Array{KEGGReaction,1}()
+@showprogress for (index, ec_number) in enumerate(ec_number_array)
 
-#     # println("Starting -> $(ec_number) $(index) of $(N)")
+    # println("Starting -> $(ec_number) $(index) of $(N)")
 
-#     rxn_object = get_reactions_for_ec_number(ec_number) |> check
-#     if (isnothing(rxn_object) == false)
-#         append!(reaction_obj_array, rxn_object)
-#     end
-# end
+    rxn_object = get_reactions_for_ec_number(ec_number) |> check
+    if (isnothing(rxn_object) == false)
+        append!(reaction_obj_array, rxn_object)
+    end
+end
 
 # list of names that we need to replace -
-# name_replace_dict = Dict{String,String}()
-# name_replace_dict["nad+"] = "nad"
-# name_replace_dict["nadp+"] = "nadp"
-# name_replace_dict["h+"] = "h"
+name_replace_dict = Dict{String,String}()
+name_replace_dict["nad+"] = "nad"
+name_replace_dict["nadp+"] = "nadp"
+name_replace_dict["h+"] = "h"
 
 # we need clean up this a bit before we test with the code generator -
-# cleaned_reaction_obj_array = Array{KEGGReaction,1}()
-# for reaction_obj in reaction_obj_array
+cleaned_reaction_obj_array = Array{KEGGReaction,1}()
+for reaction_obj in reaction_obj_array
 
-#     # need to check - is either the reaction_forward or reaction_reverse missing?
-#     if (ismissing(reaction_obj.reaction_forward) == false &&
-#         ismissing(reaction_obj.reaction_reverse) == false)
+    # need to check - is either the reaction_forward or reaction_reverse missing?
+    if (ismissing(reaction_obj.reaction_forward) == false &&
+        ismissing(reaction_obj.reaction_reverse) == false)
 
-#         # ok: so if we get here then we forward and reverse strings, but could have issue w/name s
-#         for (key, value) in name_replace_dict
+        # ok: so if we get here then we forward and reverse strings, but could have issue w/name s
+        for (key, value) in name_replace_dict
 
-#             # old forward and back -
-#             original_forward = reaction_obj.reaction_forward
-#             original_backward = reaction_obj.reaction_reverse
+            # old forward and back -
+            original_forward = reaction_obj.reaction_forward
+            original_backward = reaction_obj.reaction_reverse
 
-#             # update -
-#             reaction_obj.reaction_forward = replace(original_forward, key => value)
-#             reaction_obj.reaction_reverse = replace(original_backward, key => value)
-#         end
+            # update -
+            reaction_obj.reaction_forward = replace(original_forward, key => value)
+            reaction_obj.reaction_reverse = replace(original_backward, key => value)
+        end
 
-#         # grab -
-#         push!(cleaned_reaction_obj_array, reaction_obj)
-#     end
-# end
+        # grab -
+        push!(cleaned_reaction_obj_array, reaction_obj)
+    end
+end
+
+# initialize -
+compound_record_array = Array{KEGGCompound,1}()
 
 # convert to kegg reaction (metabolites in Cxxxx) -
 reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
@@ -65,9 +68,12 @@ reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
     # get the reaction number -
     kegg_reaction_number = reaction_obj.kegg_reaction_number
 
-    # get the reaction -
-    local_reaction_object = get_reaction_for_rn_number(kegg_reaction_number) |> check
-    if (isnothing(local_reaction_object) == false)
-        push!(reaction_kegg_metabolite_markup_array, local_reaction_object)
+    # get the compound records -
+    compound_record = get_compound_records_for_reaction(kegg_reaction_number) |> check
+    if (isnothing(compound_record) == false)
+        append!(compound_record_array, compound_record)
     end
 end
+
+# update -
+unique!(compound_record_array)

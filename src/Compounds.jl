@@ -92,6 +92,11 @@ function get_compound_records(compound::String)::Some
 
     try
 
+        # do we have a bad compound code?
+        if (contains(compound, " ") == true)
+            return Some(nothing)
+        end
+
         # build url -
         url_string = "$(_KEGG_GET_URL)/$(compound)"
 
@@ -105,26 +110,28 @@ function get_compound_records(compound::String)::Some
         compound_object = KEGGCompound()
 
         # ok, so we need to split this around the \n
-        record_components = split(http_body, "\n")
+        record_components = string.(split(http_body, "\n"))
         compound_object.kegg_compound_id = compound
 
         # NAME is always the [2] -
         tmp_name = split(record_components[2], repeat(" ", 5))[2] |> lstrip |> rstrip |> lowercase
-        compound_object.kegg_compound_name = (last(tmp_name) == ';') ? tmp_name[1:end-1] : tmp_name
+        tmp_compound_name = (last(tmp_name) == ';') ? tmp_name[1:end-1] : tmp_name
+        compound_object.kegg_compound_name = replace(tmp_compound_name, "+" => "")
 
-        # FORMULA -> we need to scan to find the formula record -
-        for record in record_components
-            if (contains(record, "FORMULA") == true)
-                compound_object.kegg_compound_formula = split(record, repeat(" ", 5))[2] |> lstrip |> rstrip
-                break
-            end
+        # FORMULA section -
+        formula_section = extract_db_file_section(record_components, "FORMULA")
+        if (isnothing(formula_section) == true)
+            return Some(nothing) # skip that compound -
+        else
+            compound_object.kegg_compound_formula = split(formula_section, repeat(" ", 5))[2] |> lstrip |> rstrip
         end
 
-        # MOL_WEIGHT -> we need to scan to find the mw recrod -
-        for record in record_components
-            if (contains(record, "MOL_WEIGHT") == true)
-                compound_object.kegg_compound_mw = parse(Float64, (split(record, repeat(" ", 2))[2] |> lstrip |> rstrip))
-            end
+        # MOL_WEIGHT -> do we have a molecular weight?
+        mw_section = extract_db_file_section(record_components, "MOL_WEIGHT")
+        if (isnothing(mw_section) == true)
+            return Some(nothing) # skip that compound -
+        else
+            compound_object.kegg_compound_mw = parse(Float64, (split(mw_section, repeat(" ", 2))[2] |> lstrip |> rstrip))
         end
 
         # return -
@@ -163,9 +170,9 @@ function get_compound_records_for_reaction(reaction_code::String)::Some
         # build a local metabolite code pool -
         local_metabolite_code_pool = Array{String,1}()
         for reaction_phrase in tmp_reaction_phrase_pool
-            
+
             # split around the + and strip space -
-            compound_code_array = split(reaction_phrase,"+")
+            compound_code_array = split(reaction_phrase, "+")
             for raw_compound_code in compound_code_array
 
                 # turn code into string, strip spaces -
