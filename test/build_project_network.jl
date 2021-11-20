@@ -4,8 +4,7 @@ using ProgressMeter
 using BSON
 
 # organism code -
-list_of_pathways = [
-    "ec00010" # glycolysis
+list_of_pathways = ["ec00010" # glycolysis
     "ec00020" # TCA cycle
     "ec00030" # pentose phosphate pathway
     "ec00190" # oxidative phosphorylation
@@ -19,8 +18,6 @@ ec_number_array = get_ec_numbers_for_pathway(list_of_pathways) |> check
 N = length(ec_number_array)
 reaction_obj_array = Array{KEGGReaction,1}()
 @showprogress "Reactions: " for (index, ec_number) in enumerate(ec_number_array)
-
-    # println("Starting -> $(ec_number) $(index) of $(N)")
 
     rxn_object = get_reactions_for_ec_number(ec_number) |> check
     if (isnothing(rxn_object) == false)
