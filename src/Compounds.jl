@@ -52,9 +52,6 @@ function build_metabolite_keggid_matching_table()::Some
         # Package the error -
         return Some(vl_error_obj)
     end
-
-
-
 end
 
 function get_compound_records(compound_array::Array{String,1})::Some
@@ -147,11 +144,9 @@ function get_compound_records(compound::String)::Some
     end
 end
 
-
 function get_compound_records_for_reaction(reaction_code::String)::Some
 
     try
-
 
         # get the reaction object with metabolites in KEGG markup (not english names) -
         kegg_reaction_object = get_reaction_for_rn_number(reaction_code) |> check

@@ -1,6 +1,7 @@
 using VLKeggSDK
 using DataFrames
 using ProgressMeter
+using BSON
 
 # organism code -
 list_of_pathways = [
@@ -17,7 +18,7 @@ list_of_pathways = [
 ec_number_array = get_ec_numbers_for_pathway(list_of_pathways) |> check
 N = length(ec_number_array)
 reaction_obj_array = Array{KEGGReaction,1}()
-@showprogress for (index, ec_number) in enumerate(ec_number_array)
+@showprogress "Reactions: " for (index, ec_number) in enumerate(ec_number_array)
 
     # println("Starting -> $(ec_number) $(index) of $(N)")
 
@@ -58,12 +59,23 @@ for reaction_obj in reaction_obj_array
     end
 end
 
-# initialize -
-compound_record_array = Array{KEGGCompound,1}()
-
 # convert to kegg reaction (metabolites in Cxxxx) -
 reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
-@showprogress for reaction_obj in reaction_obj_array
+@showprogress "KEGG reaction format: " for reaction_object in cleaned_reaction_obj_array
+
+    # get the reaction number -
+    kegg_reaction_number = reaction_object.kegg_reaction_number
+
+    # get the reaction in KEGG metabolite format -
+    kegg_reaction_object = get_reaction_for_rn_number(kegg_reaction_number) |> check
+    if (isnothing(reaction_object) == false)
+        push!(reaction_kegg_metabolite_markup_array, kegg_reaction_object)
+    end
+end
+
+# build the metabolites table -
+compound_record_array = Array{KEGGCompound,1}()
+@showprogress "Metabolites: " for reaction_obj in reaction_obj_array
 
     # get the reaction number -
     kegg_reaction_number = reaction_obj.kegg_reaction_number
@@ -75,5 +87,20 @@ reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
     end
 end
 
-# update -
-unique!(compound_record_array)
+# for some reason unique is not working - so ...
+unique_compound_array = Array{KEGGCompound,1}()
+for compound_object in compound_record_array
+    if (in(compound_object, unique_compound_array) == false)
+        push!(unique_compound_array, compound_object)
+    end
+end
+
+# Dump model to disk -
+model = Dict{Symbol,Any}()
+model[:compounds] = (unique_compound_array |> DataFrame)
+model[:reactions] = (cleaned_reaction_obj_array |> DataFrame)
+model[:kegg_reactions] = (reaction_kegg_metabolite_markup_array |> DataFrame)
+
+# setup path -
+_PATH_TO_MODEL_FILE = "./test/model/model.bson"
+bson(_PATH_TO_MODEL_FILE, model)

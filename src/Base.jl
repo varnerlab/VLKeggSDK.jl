@@ -64,5 +64,8 @@ function extract_db_file_section(file_buffer_array::Array{String,1}, start_secti
 end
 
 function Base.:(==)(c1::KEGGCompound, c2::KEGGCompound)
-    return (c1.kegg_compound_name == c2.kegg_compound_name) && (c1.kegg_compound_id == c2.kegg_compound_id)
+    return ((c1.kegg_compound_name == c2.kegg_compound_name) &&
+            (c1.kegg_compound_id == c2.kegg_compound_id) &&
+            (c1.kegg_compound_formula == c2.kegg_compound_formula) &&
+            (c1.kegg_compound_mw == c2.kegg_compound_mw))
 end

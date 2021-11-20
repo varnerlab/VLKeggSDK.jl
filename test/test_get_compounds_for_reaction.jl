@@ -21,6 +21,13 @@ for rn_number in rn_number_array
 end
 
 # update -
-unique!(compound_record_array)
+# unique!(compound_record_array)
+
+unique_compound_array = Array{KEGGCompound,1}()
+for compound_object in compound_record_array
+    if (in(compound_object, unique_compound_array) == false)
+        push!(unique_compound_array, compound_object)
+    end
+end
 
 
