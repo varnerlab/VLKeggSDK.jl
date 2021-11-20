@@ -69,3 +69,53 @@ function Base.:(==)(c1::KEGGCompound, c2::KEGGCompound)
             (c1.kegg_compound_formula == c2.kegg_compound_formula) &&
             (c1.kegg_compound_mw == c2.kegg_compound_mw))
 end
+
+function extract_metabolite_symbols(reaction_phrase::String)
+
+    # initialize -
+    metabolite_symbol_array = Array{String,1}()
+
+    # ok, so we need to check - do we have a <=> in this reaction?
+    if (contains(reaction_phrase, "<=>") == true)
+
+        # ok, so if we get here, then we have a top level reaction phrase -
+        # split this, and go down a level -
+        reaction_components = string.(split(reaction_phrase, "<=>") .|> lstrip .|> rstrip)
+        for reaction_component in reaction_components
+
+            # get the symbols -
+            values = extract_metabolite_symbols(reaction_component)
+            for value in values
+                push!(metabolite_symbol_array, value)
+            end
+        end
+    elseif (contains(reaction_phrase, "+") == true)
+
+        # ok, so if we get here, then we have a left or right reaction phrase
+        # split this, and go down a level -
+        reaction_components = string.(split(reaction_phrase, "+") .|> lstrip .|> rstrip)
+        for reaction_component in reaction_components
+
+            # get the symbols -
+            values = extract_metabolite_symbols(reaction_component)
+            for value in values
+                push!(metabolite_symbol_array, value)
+            end
+        end
+    elseif (isnumeric(reaction_phrase[1]) == true &&
+            isequal(reaction_phrase[2], ' ') == true)
+
+        # split -
+        reaction_component = string.(split(reaction_phrase, ' ')[2])
+        values = extract_metabolite_symbols(reaction_component)
+        for value in values
+            push!(metabolite_symbol_array, value)
+        end
+    else
+
+        # finally -> we just have a symbol -
+        return [reaction_phrase |> lstrip |> rstrip]
+    end
+
+    return metabolite_symbol_array
+end

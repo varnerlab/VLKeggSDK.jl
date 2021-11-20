@@ -26,5 +26,6 @@ export build_metabolite_keggid_matching_table
 
 export check
 export extract_db_file_section
+export extract_metabolite_symbols
 
 end # module

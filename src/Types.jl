@@ -10,8 +10,13 @@ mutable struct KEGGReaction
     KEGGReaction() = new()
 end
 
+mutable struct VLMetabolicReaction
+
+    VLMetabolicReaction() = new()
+end
+
 mutable struct KEGGCompound
-    
+
     # data -
     kegg_compound_id::String
     kegg_compound_name::String

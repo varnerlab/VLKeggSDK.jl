@@ -66,9 +66,10 @@ function get_compound_records(compound_array::Array{String,1})::Some
 
             # build compound object -
             object = get_compound_records(compound) |> check
-
-            # push -
-            push!(kegg_object_array, object)
+            if (isnothing(object) == false)
+                # push -
+                push!(kegg_object_array, object)
+            end
         end
 
         # return -
