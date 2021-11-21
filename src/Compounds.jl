@@ -121,7 +121,9 @@ function get_compound_records(compound::String)::Some
         if (isnothing(formula_section) == true)
             return Some(nothing) # skip that compound -
         else
-            compound_object.compound_formula = split(formula_section, repeat(" ", 5))[2] |> lstrip |> rstrip
+            tmp_compound_formula = string(split(formula_section, repeat(" ", 5))[2] |> lstrip |> rstrip)
+            compound_object.compound_formula = tmp_compound_formula
+            compound_object.atom_dictionary = extract_atom_dictionary(tmp_compound_formula)
         end
 
         # MOL_WEIGHT -> do we have a molecular weight?

@@ -193,3 +193,67 @@ function extract_stoichiometric_dictionary(reaction_phrase::String, direction::S
     # return -
     return stoichiometric_dictionary
 end
+
+function extract_atom_dictionary(formula::String)
+
+    # test -
+    atom_dictionary = Dict()
+    local_array = Array{Char,1}()
+    element_key_array = Array{Char,1}()
+
+    # turn string into char array -
+    formula_char_array = collect(formula)
+
+    # add extra 1 if last char is a letter -
+    if (isnumeric(last(formula_char_array)) == false)
+        push!(formula_char_array, '1')
+    end
+
+    # read from the bottom -
+    reverse!(formula_char_array)
+
+    # how many chars do we have?
+    while (isempty(formula_char_array) == false)
+
+        # clean out the array from the last pass -
+        empty!(local_array)
+        empty!(element_key_array)
+
+        # grab the next value -
+        next_value = pop!(formula_char_array)
+        if (isnumeric(next_value) == false)
+
+            # we have an element -> read until I hit another element -
+            is_ok_to_loop = true
+            while (is_ok_to_loop)
+
+                if (isempty(formula_char_array) == true)
+                    break
+                end
+
+                read_one_ahead = pop!(formula_char_array)
+                if (isnumeric(read_one_ahead) == true)
+                    push!(local_array, read_one_ahead)
+                else
+
+                    # ok: so if we get here - then we read the next char, but it was a 
+                    # letter (element) - so we need to push it back on the stack ...
+                    push!(formula_char_array, read_one_ahead)
+
+                    # shutodown -
+                    is_ok_to_loop = false
+                end
+            end
+        end
+
+        # we need to turn local array into a string -
+        buffer = ""
+        [buffer *= string(x) for x in local_array]
+        if (isempty(buffer) == false)
+            atom_dictionary[string(next_value)] = parse(Int64, buffer)
+        end
+    end
+
+    # return -
+    return atom_dictionary
+end

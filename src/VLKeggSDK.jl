@@ -28,5 +28,6 @@ export check
 export extract_db_file_section
 export extract_metabolite_symbols
 export extract_stoichiometric_dictionary
+export extract_atom_dictionary
 
 end # module
