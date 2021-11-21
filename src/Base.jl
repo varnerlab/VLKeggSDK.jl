@@ -64,10 +64,10 @@ function extract_db_file_section(file_buffer_array::Array{String,1}, start_secti
 end
 
 function Base.:(==)(c1::KEGGCompound, c2::KEGGCompound)
-    return ((c1.kegg_compound_name == c2.kegg_compound_name) &&
-            (c1.kegg_compound_id == c2.kegg_compound_id) &&
-            (c1.kegg_compound_formula == c2.kegg_compound_formula) &&
-            (c1.kegg_compound_mw == c2.kegg_compound_mw))
+    return ((c1.compound_name == c2.compound_name) &&
+            (c1.compound_id == c2.compound_id) &&
+            (c1.compound_formula == c2.compound_formula) &&
+            (c1.compound_mw == c2.compound_mw))
 end
 
 function extract_metabolite_symbols(reaction_phrase::String)
@@ -118,4 +118,78 @@ function extract_metabolite_symbols(reaction_phrase::String)
     end
 
     return metabolite_symbol_array
+end
+
+function extract_stoichiometric_dictionary(reaction_phrase::String, direction::Symbol = :reactants)
+
+    # initialize -
+    stoichiometric_dictionary = Dict{String,Any}()
+
+    # ok, so we need to check - do we have a <=> in this reaction?
+    if (contains(reaction_phrase, "<=>") == true)
+
+        # ok, so if we get here, then we have a top level reaction phrase -
+        # split this, and go down a level -
+        reaction_components = string.(split(reaction_phrase, "<=>") .|> lstrip .|> rstrip)
+        for (index, reaction_component) in enumerate(reaction_components)
+
+            # setup the direction -
+            index == 1 ? direction = :reactants : direction = :products
+
+            # get the symbols -
+            value_dictionary = extract_stoichiometric_dictionary(reaction_component, direction)
+            for (key, value) in value_dictionary
+                stoichiometric_dictionary[key] = value
+            end
+        end
+    elseif (contains(reaction_phrase, "+") == true)
+
+        # ok, so if we get here, then we have a left or right reaction phrase
+        # split this, and go down a level -
+        reaction_components = string.(split(reaction_phrase, "+") .|> lstrip .|> rstrip)
+        for reaction_component in reaction_components
+
+            # get the symbols -
+            value_dictionary = extract_stoichiometric_dictionary(reaction_component, direction)
+            for (key, value) in value_dictionary
+                stoichiometric_dictionary[key] = value
+            end
+        end
+    elseif (length(reaction_phrase) >= 2 &&
+            isnumeric(reaction_phrase[1]) == true &&
+            isequal(reaction_phrase[2], ' ') == true)
+
+        # what is my multiple?
+        direction == :reactants ? α = -1 : α = 1
+
+        # split -
+        st_value = string.(split(reaction_phrase, ' ')[1])
+        metabolite_key = string.(split(reaction_phrase, ' ')[2])
+
+        # if we get here, then we have a coefficient -
+        stoichiometric_coefficient = α * parse(Float64, st_value)
+
+        # add to dictionary -
+        stoichiometric_dictionary[metabolite_key] = stoichiometric_coefficient
+
+    else
+
+        # when we get here, we just have a single bare metabolite -
+
+        # what is my multiple?
+        direction == :reactants ? α = -1 : α = 1
+
+        # if we get here, then we have a coefficient -
+        stoichiometric_coefficient = α * 1.0
+        metabolite_key = reaction_phrase
+
+        # finally -> we just have a symbol -
+        stoichiometric_dictionary[metabolite_key] = stoichiometric_coefficient
+    end
+
+    # remove spaces ... not sure where this is coming from ... but this hack should fix ...    
+    delete!(stoichiometric_dictionary, "")
+
+    # return -
+    return stoichiometric_dictionary
 end

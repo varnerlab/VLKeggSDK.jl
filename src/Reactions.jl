@@ -31,7 +31,7 @@ function get_reaction_for_rn_number(rn_number::String)::Some
 
         # initialize -
         kegg_reaction = KEGGReaction()
-        kegg_reaction.kegg_reaction_number = rn_number
+        kegg_reaction.reaction_number = rn_number
 
         # formulae the URL string -
         url_string = "$(_KEGG_GET_URL)/$(rn_number)"
@@ -51,7 +51,7 @@ function get_reaction_for_rn_number(rn_number::String)::Some
             return Some(nothing)
         end
         rxn_string = string(split(equation_section, repeat(" ", 3))[2] |> lstrip)
-        kegg_reaction.kegg_reaction_markup = rxn_string
+        kegg_reaction.reaction_markup = rxn_string
 
         # reaction components -
         rxn_component_array = string.(split(rxn_string, " <=> "))
@@ -68,7 +68,11 @@ function get_reaction_for_rn_number(rn_number::String)::Some
 
         # grab: enzyme name -
         name = extract_db_file_section(record_array, "NAME")
-        kegg_reaction.kegg_enzyme_name = string(split(name, repeat(" ", 5))[2] |> lstrip)
+        kegg_reaction.enzyme_name = string(split(name, repeat(" ", 5))[2] |> lstrip)
+
+        # build the st dictionary -
+        std = extract_stoichiometric_dictionary(rxn_string)
+        kegg_reaction.stoichiometric_dictionary = std
 
         # return -
         return Some(kegg_reaction)
@@ -170,16 +174,15 @@ function get_reactions_for_ec_number(ec_number::String)::Some
 
                     # populate w/easy stuff -
                     reaction_wrapper.ec_number = ec_number
-                    reaction_wrapper.kegg_reaction_number = rn_number
+                    reaction_wrapper.reaction_number = rn_number
 
                     # parse the body string -
                     tmp_enzyme_name = string(split(reaction_string, ";")[1])
-                    reaction_wrapper.kegg_enzyme_name = string(split(tmp_enzyme_name, "\t")[2])
+                    reaction_wrapper.enzyme_name = string(split(tmp_enzyme_name, "\t")[2])
 
                     # split into forward and reverse strings -
                     tmp_full_reaction_string = lstrip(chomp(string(split(reaction_string, ";")[2])))
-                    reaction_wrapper.kegg_reaction_markup = tmp_full_reaction_string
-
+                    reaction_wrapper.reaction_markup = tmp_full_reaction_string
 
                     tmp_string_frag = split(tmp_full_reaction_string, " <=> ")
                     if (length(tmp_string_frag) == 2)
@@ -193,6 +196,10 @@ function get_reactions_for_ec_number(ec_number::String)::Some
                         reaction_wrapper.reaction_forward = missing
                         reaction_wrapper.reaction_reverse = missing
                     end
+
+                    # for now ...
+                    tmp_reaction_string = "$(reaction_wrapper.reaction_forward) <=> $(reaction_wrapper.reaction_reverse)"
+                    reaction_wrapper.stoichiometric_dictionary = extract_stoichiometric_dictionary(tmp_reaction_string)
 
                     # cache -
                     push!(record_array, reaction_wrapper)

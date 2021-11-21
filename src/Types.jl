@@ -1,27 +1,23 @@
 mutable struct KEGGReaction
 
     ec_number::String
-    kegg_reaction_number::String
-    kegg_enzyme_name::String
-    kegg_reaction_markup::String
+    reaction_number::String
+    enzyme_name::String
+    reaction_markup::String
     reaction_forward::Union{Missing,String}
     reaction_reverse::Union{Missing,String}
+    stoichiometric_dictionary::Union{Missing,Dict{String,Number}}
 
     KEGGReaction() = new()
-end
-
-mutable struct VLMetabolicReaction
-
-    VLMetabolicReaction() = new()
 end
 
 mutable struct KEGGCompound
 
     # data -
-    kegg_compound_id::String
-    kegg_compound_name::String
-    kegg_compound_formula::String
-    kegg_compound_mw::Float64
+    compound_id::String
+    compound_name::String
+    compound_formula::String
+    compound_mw::Float64
 
     KEGGCompound() = new()
 end

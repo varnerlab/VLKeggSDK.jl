@@ -6,11 +6,11 @@ using BSON
 # organism code -
 list_of_pathways = ["ec00010" # glycolysis
     "ec00020" # TCA cycle
-    "ec00030" # pentose phosphate pathway
-    "ec00190" # oxidative phosphorylation
-    "ec00910" # nitrogen metabolism
-    "ec00900" # Terpenoid backbone biosynthesis
-    "ec00640" # Propanoate metabolism
+    # "ec00030" # pentose phosphate pathway
+    # "ec00190" # oxidative phosphorylation
+    # "ec00910" # nitrogen metabolism
+    # "ec00900" # Terpenoid backbone biosynthesis
+    # "ec00640" # Propanoate metabolism
 ]
 
 # we'll get the ec's for these pathways -
@@ -61,7 +61,7 @@ reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
 @showprogress "KEGG reaction format: " for reaction_object in cleaned_reaction_obj_array
 
     # get the reaction number -
-    kegg_reaction_number = reaction_object.kegg_reaction_number
+    kegg_reaction_number = reaction_object.reaction_number
 
     # get the reaction in KEGG metabolite format -
     kegg_reaction_object = get_reaction_for_rn_number(kegg_reaction_number) |> check
@@ -75,7 +75,7 @@ compound_record_array = Array{KEGGCompound,1}()
 @showprogress "Metabolites: " for reaction_obj in reaction_kegg_metabolite_markup_array
 
     # get the reaction number -
-    kegg_reaction_markup = reaction_obj.kegg_reaction_markup
+    kegg_reaction_markup = reaction_obj.reaction_markup
 
     # get the compound symbols -
     tmp_compound_array = extract_metabolite_symbols(kegg_reaction_markup)
