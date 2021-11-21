@@ -6,11 +6,11 @@ using BSON
 # organism code -
 list_of_pathways = ["ec00010" # glycolysis
     "ec00020" # TCA cycle
-    # "ec00030" # pentose phosphate pathway
-    # "ec00190" # oxidative phosphorylation
-    # "ec00910" # nitrogen metabolism
-    # "ec00900" # Terpenoid backbone biosynthesis
-    # "ec00640" # Propanoate metabolism
+    "ec00030" # pentose phosphate pathway
+    "ec00190" # oxidative phosphorylation
+    "ec00910" # nitrogen metabolism
+    "ec00900" # Terpenoid backbone biosynthesis
+    "ec00640" # Propanoate metabolism
 ]
 
 # we'll get the ec's for these pathways -
