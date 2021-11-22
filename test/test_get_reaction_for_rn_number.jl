@@ -7,6 +7,7 @@ rn_number_array = [
     "rn:R00771"
     "rn:R04779"
     "rn:R01068"
+    "rn:R11945"
 ]
 
 # download these reactions -

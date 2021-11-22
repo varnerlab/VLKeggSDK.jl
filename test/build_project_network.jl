@@ -73,6 +73,9 @@ reaction_kegg_metabolite_markup_array = Array{KEGGReaction,1}()
     end
 end
 
+# we may need to add some reactions here by hand ...
+# ...
+
 # build the metabolites table -
 compound_record_array = Array{KEGGCompound,1}()
 @showprogress "Metabolites: " for reaction_obj in reaction_kegg_metabolite_markup_array
