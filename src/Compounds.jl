@@ -91,7 +91,8 @@ function get_compound_records(compound::String)::Some
     try
 
         # do we have a bad compound code?
-        if (contains(compound, " ") == true)
+        if (contains(compound, " ") == true || compound[1] != 'C' ||
+            contains(compound, "(") == true)
             return Some(nothing)
         end
 

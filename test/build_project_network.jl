@@ -4,7 +4,10 @@ using ProgressMeter
 using BSON
 
 # organism code -
-list_of_pathways = ["ec00010" # glycolysis
+list_of_pathways = [
+    "ec00500" # starch and sucrose metabolism
+    "ec00040" # pentose and glucuronate interconversions
+    "ec00010" # glycolysis
     "ec00020" # TCA cycle
     "ec00030" # pentose phosphate pathway
     "ec00190" # oxidative phosphorylation
@@ -95,9 +98,9 @@ end
 
 # Dump model to disk -
 model = Dict{Symbol,Any}()
-model[:compounds] = (unique_compound_array |> DataFrame)
-model[:reactions] = (cleaned_reaction_obj_array |> DataFrame)
-model[:kegg_reactions] = (reaction_kegg_metabolite_markup_array |> DataFrame)
+model[:compounds] = unique!((unique_compound_array |> DataFrame))
+model[:reactions] = unique!((cleaned_reaction_obj_array |> DataFrame))
+model[:kegg_reactions] = unique!((reaction_kegg_metabolite_markup_array |> DataFrame))
 
 # setup path -
 _PATH_TO_MODEL_FILE = "./test/model/model.bson"
