@@ -130,7 +130,7 @@ function get_compound_records(compound::String)::Some
         # MOL_WEIGHT -> do we have a molecular weight?
         mw_section = extract_db_file_section(record_components, "MOL_WEIGHT")
         if (isnothing(mw_section) == true)
-            return Some(nothing) # skip that compound -
+            compound_object.compound_mw = 0.0
         else
             compound_object.compound_mw = parse(Float64, (split(mw_section, repeat(" ", 2))[2] |> lstrip |> rstrip))
         end

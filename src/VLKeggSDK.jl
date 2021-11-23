@@ -30,4 +30,6 @@ export extract_metabolite_symbols
 export extract_stoichiometric_dictionary
 export extract_atom_dictionary
 
+export http_get_call_with_url
+
 end # module

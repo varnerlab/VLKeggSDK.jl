@@ -17,7 +17,7 @@ mutable struct KEGGCompound
     compound_id::String
     compound_name::String
     compound_formula::String
-    compound_mw::Float64
+    compound_mw::Union{Missing,Float64}
     atom_dictionary::Union{Missing,Dict{String,Number}}
 
     KEGGCompound() = new()
