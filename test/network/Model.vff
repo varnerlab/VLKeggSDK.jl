@@ -125,3 +125,12 @@ ec:4.2.1.2,rn:R01082,(S)-malate hydrolyase,C00122 + C00001 <=> C00149
 // curl -X GET http://rest.kegg.jp/get/rn:R00342
 ec:1.1.1.37::1.1.1.299,rn:R00342,(S)-malate:NAD+ oxidoreductase,C00149 + C00003 <=> C00036 + C00004 + C00080
 
+// --------------------------------------------------------------------------------------------------------- //
+// OXIDATIVE PHOSPHORYLATION
+// --------------------------------------------------------------------------------------------------------- //
+
+// Ubiquinone + NADH + 6 H+ <=> Ubiquinol + NAD+ + 5 H+
+// curl -X GET http://rest.kegg.jp/get/rn:R11945
+// Notes: complex I
+ec:7.1.1.2,rn:R11945,NADH:ubiquinone oxidoreductase,C00399 + C00004 + 6 C00080 <=> C00390 + C00003 + 5 C00080
+
