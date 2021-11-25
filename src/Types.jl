@@ -1,9 +1,9 @@
 mutable struct KEGGReaction
 
-    ec_number::String
-    reaction_number::String
-    enzyme_name::String
-    reaction_markup::String
+    ec_number::Union{Missing, String, Array{String,1}}
+    reaction_number::Union{Missing,String}
+    enzyme_name::Union{Missing,String}
+    reaction_markup::Union{Missing,String}
     reaction_forward::Union{Missing,String}
     reaction_reverse::Union{Missing,String}
     stoichiometric_dictionary::Union{Missing,Dict{String,Number}}

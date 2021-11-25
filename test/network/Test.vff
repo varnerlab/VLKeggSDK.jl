@@ -1,0 +1,67 @@
+// Test VFF file for ENGRI 1120 projects
+
+// --- GLYCOLYSIS ----------------------------------------------------------------------------------------------------- //
+// ATP + alpha-D-Glucose <=> ADP + alpha-D-Glucose 6-phosphate -
+// curl -X GET http://rest.kegg.jp/get/rn:R01786
+ec:2.7.1.1,rn:R01786,ATP:D-glucose 6-phosphotransferase,C00002 + C00267 <=> C00008 + C00668
+
+// alpha-D-Glucose 6-phosphate <=> beta-D-Fructose 6-phosphate -
+// curl -X GET http://rest.kegg.jp/get/rn:R02740
+ec:5.3.1.9,rn:R02740,D-glucose-6-phosphate aldose-ketose-isomerase,C00668 <=> C05345
+
+// ATP + beta-D-Fructose 6-phosphate <=> ADP + beta-D-Fructose 1,6-bisphosphate -
+// curl -X GET http://rest.kegg.jp/get/rn:R04779
+ec:2.7.1.11,rn:R04779,ATP:D-fructose-6-phosphate 1-phosphotransferase,C00002 + C05345 <=> C00008 + C05378
+
+// beta-D-Fructose 1,6-bisphosphate <=> Glycerone phosphate + D-Glyceraldehyde 3-phosphate
+// curl -X GET http://rest.kegg.jp/get/rn:R01070
+ec:4.1.2.13,rn:R01070,beta-D-fructose-16-bisphosphate D-glyceraldehyde-3-phosphate-lyase,C05378 <=> C00111 + C00118
+
+// D-Glyceraldehyde 3-phosphate <=> Glycerone phosphate
+// curl -X GET http://rest.kegg.jp/get/rn:R01015
+ec:5.3.1.1,rn:R01015,D-glyceraldehyde-3-phosphate aldose-ketose-isomerase,C00118 <=> C00111
+
+// D-Glyceraldehyde 3-phosphate + NADP+ + H2O <=> 3-Phospho-D-glycerate + NADPH + H+
+// curl -X GET http://rest.kegg.jp/get/rn:R01058
+ec:1.2.1.9::ec:1.2.1.90,rn:R01058,D-glyceraldehyde 3-phosphate:NADP+ oxidoreductase,C00118 + C00006 + C00001 <=> C00197 + C00005 + C00080
+
+// D-Glyceraldehyde 3-phosphate + Orthophosphate + NAD+ <=> 3-Phospho-D-glyceroyl phosphate + NADH + H+
+// curl -X GET http://rest.kegg.jp/get/rn:R01061
+ec:1.2.1.12::ec:1.2.1.59,rn:R01061,D-glyceraldehyde-3-phosphate:NAD+ oxidoreductase,C00118 + C00009 + C00003 <=> C00236 + C00004 + C00080
+
+// ADP + 3-Phospho-D-glyceroyl phosphate <=> ATP + 3-Phospho-D-glycerate
+// curl -X GET http://rest.kegg.jp/get/rn:R01512
+// Notes: reversed the KEGG reaction string
+ec:2.7.2.3,rn:R01512,ATP:3-phospho-D-glycerate 1-phosphotransferase,C00008 + C00236 <=> C00002 + C00197
+
+// 3-Phospho-D-glycerate <=> 2-Phospho-D-glycerate
+// curl -X GET http://rest.kegg.jp/get/rn:R01518
+// Notes: reversed the KEGG reaction string 
+ec:5.4.2.11::ec:5.4.2.12,rn:R01518,D-phosphoglycerate 23-phosphomutase,C00197 <=> C00631
+
+// 2-Phospho-D-glycerate <=> Phosphoenolpyruvate + H2O
+// curl -X GET http://rest.kegg.jp/get/rn:R00658
+ec:4.2.1.11,rn:R00658,2-phospho-D-glycerate hydrolyase,C00631 <=> C00074 + C00001
+
+// ADP + Phosphoenolpyruvate <=> ATP + Pyruvate
+// curl -X GET http://rest.kegg.jp/get/rn:R00200
+ec:2.7.1.40,rn:R00200,ATP:pyruvate 2-O-phosphotransferase,C00008 + C00074 <=> C00002 + C00022
+
+// Pyruvate dehydrogenase (pdh) 1.2.1.4; 2.3.1.12; 1.8.1.4
+// R_pdh,M_coa_c+M_nad_c+M_pyr_c,M_accoa_c+M_co2_c+M_nadh_c+M_h_c,0,inf
+// Notes: lumped reaction to make Acetyl-CoA
+ec:1.2.1.4::ec:2.3.1.12::1.8.1.4,rn:b06060cd-1a8c-44b6-80a2-db68fe9dd490,Pyruvate dehydrogenase (pdh),C00010 + C00003 + C00022 <=> C00024 + C00011 + C00004 + C00080
+
+// --- TCA CYCLE ----------------------------------------------------------------------------------------------------- //
+// Acetyl-CoA + H2O + Oxaloacetate <=> Citrate + CoA
+// curl -X GET http://rest.kegg.jp/get/rn:R00351
+// Notes: reversed the KEGG reaction string
+ec:2.3.3.1::ec:2.3.3.3::ec:2.3.3.16,rn:R00351,acetyl-CoA:oxaloacetate C-acetyltransferase,C00024 + C00001 + C00036 <=> C00158 + C00010
+
+// Citrate <=> cis-Aconitate + H2O
+// curl -X GET http://rest.kegg.jp/get/rn:R01325
+ec:4.2.1.3,rn:R01325,citrate hydrolyase,C00158 <=> C00417 + C00001
+
+// cis-Aconitate + H2O <=> Isocitrate
+// curl -X GET http://rest.kegg.jp/get/rn:R01900
+// Notes: reversed the KEGG reaction string

@@ -22,6 +22,32 @@ function check(result::Some)::(Union{Nothing,T} where {T<:Any})
     return result.value
 end
 
+function read_file_from_path(path_to_file::String)::Array{String,1}
+
+    # initialize -
+    buffer = String[]
+
+    # Read in the file -
+    open("$(path_to_file)", "r") do file
+        for line in eachline(file)
+            +(buffer,line)
+        end
+    end
+
+    # return -
+    return buffer
+end
+
+function +(buffer::Array{String,1}, content_array::Array{String,1})
+    for line in content_array
+        push!(buffer, line)
+    end
+end
+
+function +(buffer::Array{String,1}, line::String)
+    push!(buffer, line)
+end
+
 function extract_db_file_section(file_buffer_array::Array{String,1}, single_line_section_marker::String)::Union{Nothing,String}
 
     # find the SECTION START on a single line -
@@ -120,7 +146,8 @@ function extract_metabolite_symbols(reaction_phrase::String)
     return metabolite_symbol_array
 end
 
-function extract_stoichiometric_dictionary(reaction_phrase::String, direction::Symbol = :reactants)
+function extract_stoichiometric_dictionary(reaction_phrase::String, 
+    direction::Symbol = :reactants)
 
     # initialize -
     stoichiometric_dictionary = Dict{String,Any}()
