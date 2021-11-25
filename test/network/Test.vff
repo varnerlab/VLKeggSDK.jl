@@ -1,13 +1,40 @@
 // Test VFF file for ENGRI 1120 projects
 
 // --------------------------------------------------------------------------------------------------------- //
+// FEEDSTOCK
+// --------------------------------------------------------------------------------------------------------- //
+
+// SUCROSE 
+// Sucrose + H2O <=> D-Fructose + D-Glucose
+// curl -X GET http://rest.kegg.jp/get/rn:R00801 
+// Notes: changed to D-Glucose => alpha-D-Glucose
+ec:3.2.1.10::ec:3.2.1.20::ec:3.2.1.26::ec:3.2.1.48,rn:R00801,sucrose glucohydrolase,C00089 + C00001 <=> C00095 + C00267
+
+// ATP + D-Fructose <=> ADP + D-Fructose 6-phosphate
+// curl -X GET http://rest.kegg.jp/get/rn:R00760
+// Notes: changed D-Fructose 6-phosphate => beta-D-Fructose 6-phosphate
+ec:2.7.1.1::ec:2.7.1.4,rn:R00760,ATP:D-fructose 6-phosphotransferase,C00002 + C00095 <=> C00008 + C05345
+
+// MALTOSE
+// Maltose + H2O <=> 2 D-Glucose
+// curl -X GET http://rest.kegg.jp/get/rn:R00028
+// Notes: changed D-Glucose => alpha-D-Glucose
+ec:3.2.1.20,rn:R00028,maltose glucohydrolase,C00208 + C00001 <=> 2 C00267
+
+// XYLOSE
+// D-Xylose + NADPH + H+ <=> Xylitol + NADP+
+// curl -X GET http://rest.kegg.jp/get/rn:R01431
+// Notes: reversed the KEGG reaction
+ec:1.1.1.21::ec:1.1.1.307,rn:R01431,xylitol:NADP+ oxidoreductase,C00181 + C00005 + C00080 <=> C00379 + C00006
+
+// --------------------------------------------------------------------------------------------------------- //
 // GLYCOLYSIS
 // --------------------------------------------------------------------------------------------------------- //
 // ATP + alpha-D-Glucose <=> ADP + alpha-D-Glucose 6-phosphate -
 // curl -X GET http://rest.kegg.jp/get/rn:R01786
 ec:2.7.1.1,rn:R01786,ATP:D-glucose 6-phosphotransferase,C00002 + C00267 <=> C00008 + C00668
 
-// alpha-D-Glucose 6-phosphate <=> beta-D-Fructose 6-phosphate -
+// alpha-D-Glucose 6-phosphate <=> beta-D-Fructose 6-phosphate
 // curl -X GET http://rest.kegg.jp/get/rn:R02740
 ec:5.3.1.9,rn:R02740,D-glucose-6-phosphate aldose-ketose-isomerase,C00668 <=> C05345
 
@@ -77,7 +104,7 @@ ec:1.1.1.41::ec:1.1.1.286,rn:R00709,isocitrate:NAD+ oxidoreductase,C00311 + C000
 
 // M_akg_c+M_coa_c+M_nad_c,M_co2_c+M_nadh_c+M_succoa_c,0,inf;
 // Notes: lumped reaction 
-// ...
+// TODO
 
 // ADP + Orthophosphate + Succinyl-CoA <=> ATP + Succinate + CoA
 // curl -X GET http://rest.kegg.jp/get/rn:R00405
@@ -97,3 +124,4 @@ ec:4.2.1.2,rn:R01082,(S)-malate hydrolyase,C00122 + C00001 <=> C00149
 // (S)-Malate + NAD+ <=> Oxaloacetate + NADH + H+
 // curl -X GET http://rest.kegg.jp/get/rn:R00342
 ec:1.1.1.37::1.1.1.299,rn:R00342,(S)-malate:NAD+ oxidoreductase,C00149 + C00003 <=> C00036 + C00004 + C00080
+
