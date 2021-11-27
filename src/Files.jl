@@ -31,7 +31,7 @@ function build_reaction_table_from_vff_file(path_to_vff_file::String)::Some
                     reaction_object.ec_number = ec_number
                 end
 
-                @show reaction_components
+                # @show reaction_components
 
                 # reaction number -
                 rn_number = reaction_components[2]

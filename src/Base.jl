@@ -1,3 +1,49 @@
+function _fix_compound_string(chars::Array{Char,1})
+
+    # init tmp
+    tmp_array = Array{Char,1}()
+
+    if (isempty(chars) == true)
+        return tmp_array
+    end
+
+    # get next char -
+    next_char = pop!(chars)
+    if (isnumeric(next_char) == true)
+
+        push!(tmp_array, next_char)
+
+        values = _fix_compound_string(chars)
+        for value in values
+            push!(tmp_array, value)
+        end
+        
+    elseif (isnumeric(next_char) == false)
+        
+        # ok, so pop another char -
+        next_next_char = pop!(chars)
+        if (isnumeric(next_next_char) == false)
+            
+            push!(tmp_array, next_char)
+            push!(tmp_array, '1')
+            
+            # push the test char back onto the stack -
+            push!(chars, next_next_char)
+        else
+            push!(tmp_array, next_char)
+            push!(tmp_array, next_next_char)
+        end
+        
+        values = _fix_compound_string(chars)
+        for value in values
+            push!(tmp_array, value)
+        end
+    end
+
+    # return -
+    return tmp_array
+end
+
 function check(result::Some)::(Union{Nothing,T} where {T<:Any})
 
     # ok, so check, do we have an error object?
@@ -94,6 +140,12 @@ function Base.:(==)(c1::KEGGCompound, c2::KEGGCompound)
             (c1.compound_id == c2.compound_id) &&
             (c1.compound_formula == c2.compound_formula) &&
             (c1.compound_mw == c2.compound_mw))
+end
+
+function Base.isless(c1::KEGGCompound, c2::KEGGCompound)
+    compound_id_c1 = c1.compound_id
+    compound_id_c2 = c2.compound_id
+    return (isless(compound_id_c1,compound_id_c2))
 end
 
 function extract_metabolite_symbols(reaction_phrase::String)
@@ -236,36 +288,41 @@ function extract_atom_dictionary(formula::String)
         push!(formula_char_array, '1')
     end
 
+    # clean the array -
+    C_tmp = _fix_compound_string(reverse(formula_char_array))
+
+    @show C_tmp
+
     # read from the bottom -
-    reverse!(formula_char_array)
+    reverse!(C_tmp)
 
     # how many chars do we have?
-    while (isempty(formula_char_array) == false)
+    while (isempty(C_tmp) == false)
 
         # clean out the array from the last pass -
         empty!(local_array)
         empty!(element_key_array)
 
         # grab the next value -
-        next_value = pop!(formula_char_array)
+        next_value = pop!(C_tmp)
         if (isnumeric(next_value) == false)
 
             # we have an element -> read until I hit another element -
             is_ok_to_loop = true
             while (is_ok_to_loop)
 
-                if (isempty(formula_char_array) == true)
+                if (isempty(C_tmp) == true)
                     break
                 end
 
-                read_one_ahead = pop!(formula_char_array)
+                read_one_ahead = pop!(C_tmp)
                 if (isnumeric(read_one_ahead) == true)
                     push!(local_array, read_one_ahead)
                 else
 
                     # ok: so if we get here - then we read the next char, but it was a 
                     # letter (element) - so we need to push it back on the stack ...
-                    push!(formula_char_array, read_one_ahead)
+                    push!(C_tmp, read_one_ahead)
 
                     # shutodown -
                     is_ok_to_loop = false
