@@ -198,7 +198,7 @@ ec:3.1.1.31,rn:R02035,6-Phospho-D-glucono-15-lactone lactonohydrolase,C01236 + C
 ec:1.1.1.44::ec:1.1.1.351,rn:R01528,6-phospho-D-gluconate:NADP+ 2-oxidoreductase,C00345 + C00006 <=> C00199 + C00011 + C00005 + C00080
 
 // --------------------------------------------------------------------------------------------------------- //
-// OXIDATIVE PHOSPHORYLATION
+// OXIDATIVE PHOSPHORYLATION AND ENERGY METABOLISM
 // --------------------------------------------------------------------------------------------------------- //
 // Ubiquinone + NADH + 6 H+ <=> Ubiquinol + NAD+ + 5 H+
 // curl -X GET http://rest.kegg.jp/get/rn:R11945
@@ -229,6 +229,16 @@ ec:7.1.2.1,rn:74aa5235-32e2-403a-9043-5b7e59d56255,proton-translocating ATPase,C
 // Diphosphate + H2O <=> 2 Orthophosphate
 // curl -X GET http://rest.kegg.jp/get/rn:R00004
 ec:3.6.1.1,rn:R00004,diphosphate phosphohydrolase,C00013 + C00001 <=> 2 C00009
+
+// ATP + NDP <=> ADP + Nucleoside triphosphate
+// curl -X GET http://rest.kegg.jp/get/rn:R00331
+// Notes: CTP => C00063
+// Notes: CDP => C00112
+ec:2.7.4.6,rn:R00331,ATP:nucleoside-diphosphate phosphotransferase,C00002 + C00112 <=> C00008 + C00063
+
+// ATP + CMP <=> ADP + CDP
+// curl -X GET http://rest.kegg.jp/get/rn:R00512
+ec:2.7.4.14::ec:2.7.4.25,rn:R00512,ATP:CMP phosphotransferase,C00002 + C00055 <=> C00008 + C00112
 
 // --------------------------------------------------------------------------------------------------------- //
 // PRODUCTS
