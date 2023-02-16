@@ -90,17 +90,18 @@ function get_compound_records(compound::String)::Some
 
     try
 
+    
         # do we have a bad compound code?
-        if (contains(compound, " ") == true || compound[1] != 'C' ||
-            contains(compound, "(") == true)
-            return Some(nothing)
-        end
+        # if (contains(compound, " ") == true || compound[1] != 'C' ||
+        #     contains(compound, "(") == true)
+        #     return Some(nothing)
+        # end
 
         # build url -
         url_string = "$(_KEGG_GET_URL)/$(compound)"
 
         # make the call -
-        http_body = http_get_call_with_url(url_string) |> check
+        http_body = http_get_call_with_url(url_string) |> check        
         if (isempty(http_body) == true)
             return Some(nothing)
         end
